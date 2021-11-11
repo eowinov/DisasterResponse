@@ -5,6 +5,18 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    '''
+    INPUT:
+    messages_filepath - filepath of the csv file containing the messages 
+    categories_filepath - filepath of the csv file containing the categories 
+    
+    OUTPUT:
+    df - a dataframe that merges the message data and the categories data on the id column
+    
+    Provides merged DataFrame containing the messages and the matching categories for further use in 
+    prediction model
+    '''
+
     #read from csv files
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
@@ -14,6 +26,17 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    '''
+    INPUT:
+    df - a dataframe with one column containig all category values
+    
+    OUTPUT:
+    df - a clean dataframe consisting of one column per category and a binary value wheter the message
+         of this particular row matches the category 
+    
+    Provides a clean DataFrame with one column per category and no duplicates.
+    '''
+
     # create a dataframe of the 36 individual category columns
     categories = pd.DataFrame(df['categories'].str.split(pat=';', expand=True))
     
@@ -46,8 +69,15 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    '''
+    INPUT:
+    df - a dataframe that is saved in a database
+    database_filename - the name of the file that contains database
+    
+    Creates a new engine and saves the dataframe to a SQL Database in the messages table
+    '''
     engine = create_engine('sqlite:///data/DisasterResponse.db')
-    df.to_sql('messages', engine, index=False)  
+    df.to_sql('messages', engine, if_exists='replace', index=False)  
 
 
 def main():

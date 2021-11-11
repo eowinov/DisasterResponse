@@ -7,8 +7,9 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
-from sklearn.externals import joblib
+from plotly.graph_objs import Bar, Scatter 
+#from sklearn.externals import joblib
+import joblib
 from sqlalchemy import create_engine
 
 
@@ -29,6 +30,10 @@ def tokenize(text):
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('messages', engine)
 
+# remove child_alone column due to the choice of our classifier 
+# that is a LinearSVC and cannot handle attributes with only one class
+df = df.drop('child_alone', axis=1)
+
 # load model
 model = joblib.load("../models/classifier.pkl")
 
@@ -43,6 +48,16 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # calculate the length of messages for a visual and count the values of the lengths 
+    length_of_messages = df['message'].str.len().value_counts().index.values
+    num_of_length = df['message'].str.len().value_counts()
+    df_len_messages = pd.DataFrame({'length messages':length_of_messages,'num length':num_of_length})
+    df_len_messages = df_len_messages.sort_values(by='length messages')
+
+    # extract the categories and the number of messages foreach category
+    categories = df.columns[4:]
+    num_messages_per_cat = df.iloc[:,4:].sum()
+
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -61,6 +76,42 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=categories,
+                    y=num_messages_per_cat
+                )
+            ],
+
+            'layout': {
+                'title': 'Number of messages per category',
+                'yaxis': {
+                    'title': "Number of Messages"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
+        },
+        {
+            'data': [
+                Scatter(
+                    x=df_len_messages['length messages'],
+                    y=df_len_messages['num length']
+                )
+            ],
+
+            'layout': {
+                'title': 'Length of Messages',
+                'yaxis': {
+                    'title': "Number of Messages"
+                },
+                'xaxis': {
+                    'title': "Length of Message"
                 }
             }
         }
