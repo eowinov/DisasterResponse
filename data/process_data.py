@@ -64,6 +64,10 @@ def clean_data(df):
 
     # drop duplicates
     df = df.drop_duplicates()
+
+    # change value 2 to 1 in column 'related'
+    df['related'] = df['related'].astype('str').str.replace('2', '1')
+    df['related'] = df['related'].astype('int')
         
     return df
 
