@@ -40,9 +40,10 @@ The folder "app" holds the html files used for the flask webapp. The run.py file
 
 3. Go to http://0.0.0.0:3001/ (instead of 0.0.0.0 I have to use my local IP)
 
-## Webapp Results
-![](/main_page_visuals.jgp "Main Page Visuals")
-![](/message_classification.jpg "Message Classification")
+## Webapp Results!
+
+[main_page_visuals](https://user-images.githubusercontent.com/91085353/141383667-c78b1ec9-57a2-4936-b587-9e2249d60704.JPG)
+![message_classification](https://user-images.githubusercontent.com/91085353/141383678-2f8d2a63-aa2a-4d24-8c66-da2b0bb69f58.JPG)
 
 ## Acknowledgements
 1. [Figure Eight](https://appen.com/) for providing the data set for this project
